@@ -1,0 +1,10 @@
+#!/usr/bin/env ruby
+
+require 'rails_console'
+
+if ARGV.include?('--deploy-file')
+  deploy_file = (ARGV - ['--deploy-file']).join(' ')
+  RailsConsole.deploy_file(deploy_file)
+end
+
+RailsConsole.connection
