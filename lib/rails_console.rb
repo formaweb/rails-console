@@ -1,9 +1,10 @@
 # require 'rails_console/version'
 
 module RailsConsole
-  BASE_COMMAND = 'ssh -t USER@SERVER \'cd PATH/current && bundle exec rails c production\''
+  BASE_COMMAND = 'ssh -t USER@SERVER \'cd PATH/current && COMMAND\''
 
   @@deploy_file = './config/deploy.rb'
+  @@command_mode = :console
 
   def self.deploy_file
     @@deploy_file
@@ -11,6 +12,14 @@ module RailsConsole
 
   def self.deploy_file= option
     @@deploy_file = option
+  end
+
+  def self.command_mode
+    @@command_mode
+  end
+
+  def self.command_mode= option
+    @@command_mode = option
   end
 
   def self.setup(&block)
@@ -42,6 +51,18 @@ module RailsConsole
     else
       command = BASE_COMMAND.gsub('USER', connection_data[:user]).gsub('PATH', connection_data[:path]).gsub('SERVER', connection_data[:server])
       puts "Connecting to #{connection_data[:server]} into #{connection_data[:path]}..."
+
+      case @@command_mode
+      when :console
+        command = command.gsub('COMMAND', 'bundle exec rails c production')
+      when :log
+        command = command.gsub('COMMAND', 'tail -f log/production.log')
+      when :start_puma
+        command = command.gsub('COMMAND', 'bundle exec puma -e production -C config/puma_production.rb -d')
+      else
+        puts "Invalid command mode '#{@@command_mode}', please try --mode with 'console', 'log' or 'start_puma'."
+        return
+      end
 
       system(command)
     end

@@ -7,4 +7,17 @@ if ARGV.include?('--deploy-file')
   RailsConsole.deploy_file(deploy_file)
 end
 
+if ARGV.include?('--mode')
+  command_mode = (ARGV - ['--mode']).join(' ')
+  RailsConsole.command_mode(command_mode.to_sym)
+end
+
+if ARGV.include?('--logs')
+  RailsConsole.command_mode(:log)
+end
+
+if ARGV.include?('--start-puma')
+  RailsConsole.command_mode(:start_puma)
+end
+
 RailsConsole.connection
