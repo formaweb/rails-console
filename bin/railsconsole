@@ -4,16 +4,16 @@ require 'rails_console'
 
 if ARGV.include?('--deploy-file')
   deploy_file = (ARGV - ['--deploy-file']).join(' ')
-  RailsConsole.deploy_file(deploy_file)
+  RailsConsole.deploy_file = deploy_file
 end
 
 if ARGV.include?('--mode')
   command_mode = (ARGV - ['--mode']).join(' ')
-  RailsConsole.command_mode(command_mode.to_sym)
+  RailsConsole.command_mode = command_mode.to_sym
 end
 
 if ARGV.include?('--logs')
-  RailsConsole.command_mode(:log)
+  RailsConsole.command_mode = :log
 end
 
 if ARGV.include?('--start-puma')
